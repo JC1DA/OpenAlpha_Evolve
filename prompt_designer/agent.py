@@ -36,7 +36,7 @@ class PromptDesignerAgent(PromptDesignerInterface, BaseAgent):
         if not self.task_definition.input_output_examples:
             return "No input/output examples provided."
         formatted_examples = []
-        for i, example in enumerate(self.task_definition.input_output_examples):
+        for i, example in enumerate(self.task_definition.input_output_examples[:8]):
             input_str = str(example.get('input'))
             output_str = str(example.get('output'))
             formatted_examples.append(f"Example {i+1}:\n  Input: {input_str}\n  Expected Output: {output_str}")
@@ -46,7 +46,8 @@ class PromptDesignerAgent(PromptDesignerInterface, BaseAgent):
         if not evaluation_feedback:
             return "No detailed evaluation feedback is available for the previous version of this code. Attempt a general improvement or refinement."
 
-        correctness = evaluation_feedback.get("correctness_score", None)
+        # correctness = evaluation_feedback.get("correctness_score", None)
+        correctness = evaluation_feedback.get("correctness", None)
         runtime = evaluation_feedback.get("runtime_ms", None)
         errors = evaluation_feedback.get("errors", [])                          
                                                                                                

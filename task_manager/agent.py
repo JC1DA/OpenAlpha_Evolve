@@ -128,7 +128,8 @@ class TaskManagerAgent(TaskManagerInterface):
             current_population = self.selection_controller.select_survivors(current_population, offspring_population, self.population_size)
             logger.info(f"Generation {gen}: New population size: {len(current_population)}.")
 
-            best_program_this_gen = sorted(current_population, key=lambda p: (p.fitness_scores.get("correctness", -1), -p.fitness_scores.get("runtime_ms", float('inf'))), reverse=True) 
+            # best_program_this_gen = sorted(current_population, key=lambda p: (p.fitness_scores.get("correctness", -1), -p.fitness_scores.get("runtime_ms", float('inf'))), reverse=True) 
+            best_program_this_gen = sorted(current_population, key=lambda p: (p.fitness_scores.get("correctness", -1)), reverse=True) 
             if best_program_this_gen:
                  logger.info(f"Generation {gen}: Best program: ID={best_program_this_gen[0].id}, Fitness={best_program_this_gen[0].fitness_scores}")
             else:
@@ -139,7 +140,8 @@ class TaskManagerAgent(TaskManagerInterface):
                                                               
 
         logger.info("Evolutionary cycle completed.")
-        final_best = await self.database.get_best_programs(task_id=self.task_definition.id, limit=1, objective="correctness_score")
+        # final_best = await self.database.get_best_programs(task_id=self.task_definition.id, limit=1, objective="correctness_score")
+        final_best = await self.database.get_best_programs(task_id=self.task_definition.id, limit=1, objective="correctness")
         if final_best:
             logger.info(f"Overall Best Program: {final_best[0].id}, Code:\n{final_best[0].code}\nFitness: {final_best[0].fitness_scores}")
         else:
@@ -173,6 +175,7 @@ class TaskManagerAgent(TaskManagerInterface):
             feedback = {
                 "errors": parent.errors,
                 "correctness_score": parent.fitness_scores.get("correctness"),
+                "correctness": parent.fitness_scores.get("correctness"),
                 "runtime_ms": parent.fitness_scores.get("runtime_ms")
                                                                          
             }
